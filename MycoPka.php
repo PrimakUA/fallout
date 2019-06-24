@@ -140,5 +140,15 @@ if(isset($_POST['send']))
 </body>
 </html>
 
+$characters = 'characters.txt';
+
+$fileWrite = fopen($characters, 'a+');
+fwrite($fileWrite, '****************************************************************' . PHP_EOL);
+foreach ($newCharacterCreated as $key => $value) {
+fwrite($fileWrite, $key . ' - ' . $value . PHP_EOL);
+}
+fwrite($fileWrite, '****************************************************************' . PHP_EOL . PHP_EOL);
+fclose($fileWrite);
+
 
 

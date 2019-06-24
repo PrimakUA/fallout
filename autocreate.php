@@ -147,8 +147,15 @@ function special()
 
 $newCharacterCreated = array_merge(autoNewCharacterCreate($maleNames, $femaleNames, $lastNames), special());
 echo 'Automatic character creation: ';
-print_r($newCharacterCreated);
-$result = 1;
+$characters = 'characters.txt';
+
+$fileWrite = fopen($characters, 'a+');
+fwrite($fileWrite, '****************************************************************' . PHP_EOL);
+foreach ($newCharacterCreated as $key => $value) {
+    fwrite($fileWrite, $key . ' - ' . $value . PHP_EOL);
+}
+fwrite($fileWrite, '****************************************************************' . PHP_EOL . PHP_EOL);
+fclose($fileWrite);
 $_SESSION['success'] = 'Персонаж успешно создан.';
-Header('Location: /mysite/index.php');
+Header('Location: index.php');
 

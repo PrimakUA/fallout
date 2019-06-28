@@ -1,5 +1,5 @@
-<?php
-session_start();
+﻿<?php
+session_start();//correct2
 
 
 $first_name = '';

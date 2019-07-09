@@ -36,7 +36,7 @@ CREATE TABLE `characters` (
   `a` int(2) NOT NULL DEFAULT '1',
   `l` int(2) NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -45,7 +45,7 @@ CREATE TABLE `characters` (
 
 LOCK TABLES `characters` WRITE;
 /*!40000 ALTER TABLE `characters` DISABLE KEYS */;
-INSERT INTO `characters` VALUES (1,'Baba','Bobo','Femail',66,3,8,5,7,4,3,6);
+INSERT INTO `characters` VALUES (1,'Baba','Bobo','Femail',66,3,8,5,7,4,3,6),(2,'Elijah','Lee','Male',23,9,4,9,5,1,4,8),(3,'James','Brown','Male',23,8,1,4,1,7,9,10),(4,'Oliver','Wilson','Male',21,3,1,6,9,10,3,8),(5,'Daniel','Jackson','Male',47,1,5,8,1,5,10,10),(6,'James','Young','Male',37,7,1,10,1,8,3,10),(7,'Sofia','Thompson','Female',27,9,9,2,8,1,4,7),(8,'Liam','Moore','Male',49,9,2,3,10,10,4,2),(9,'Ethan','Thompson','Male',38,9,1,1,4,7,8,10),(12,'BlaBla','LaLa','Female',33,8,5,2,2,8,5,10),(13,'1111','2222','Male',13,10,7,4,2,1,8,8);
 /*!40000 ALTER TABLE `characters` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -58,4 +58,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-07-09 22:35:51
+-- Dump completed on 2019-07-10  0:13:02

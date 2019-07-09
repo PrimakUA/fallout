@@ -1,6 +1,8 @@
 ﻿<?php
-session_start();//correct2
+session_start();
 
+require_once($_SERVER['DOCUMENT_ROOT'] . '/fallout/_db.php');
+require_once($_SERVER['DOCUMENT_ROOT'] . '/fallout/_functions.php');
 
 $first_name = '';
 $last_name = '';
@@ -13,44 +15,6 @@ if (isset($_POST['last_name'])) $last_name = $_POST['last_name'];
 if (isset($_POST['gender_id'])) $gender_id = $_POST['gender_id'];
 if (isset($_POST['age'])) $age = $_POST['age'];
 
-
-function newCharacterCreate($first_name, $last_name, $age, $gender_id)
-{
-
-    if ($gender_id == 1) {
-        $sex = 'Male';
-    } else $sex = 'Female';
-
-    $newCharacterHandCreate[] = $first_name . ' ' . $last_name . ' ' . $age . ' ' . $sex;
-
-    return $newCharacterHandCreate;
-
-}
-
-function special()
-{
-
-    $SPECIAL = ['S', 'P', 'E', 'C', 'I', 'A', 'L'];
-
-    $groupMembers = count($SPECIAL);
-    $maxSum = 40;
-    $maxValue = 10;
-
-    $groups = array();
-    $member = 0;
-
-    while ((array_sum($groups) != $maxSum)) {
-        $res = rand(1, $maxSum / rand(($maxSum / $maxValue), $maxSum));
-        $groups[$member] = $res;
-        if (++$member == $groupMembers) {
-            $member = 0;
-        }
-    }
-    $resultArray = array_combine($SPECIAL, $groups);
-
-    return $resultArray;
-}
-
 $errors = [];
 if (isset($_POST['send'])) {
     if (strlen($first_name) <= 0) $errors['first_name'] = 'Поле "Имя персонажа" не заполнено.';
@@ -61,30 +25,32 @@ if (isset($_POST['send'])) {
     if (count($errors) <= 0) {
 
         $newCharacterCreated = array_merge(newCharacterCreate($first_name, $last_name, $age, $gender_id), special());
+        $gender = $newCharacterCreated[3];
+        $s = $newCharacterCreated['S'];
+        $p = $newCharacterCreated['P'];
+        $e = $newCharacterCreated['E'];
+        $c = $newCharacterCreated['C'];
+        $i = $newCharacterCreated['I'];
+        $a = $newCharacterCreated['A'];
+        $l = $newCharacterCreated['L'];
+
         echo 'Manual creation: ';
-
-        print_r($newCharacterCreated);
-
         if ($newCharacterCreated > 0) {
-            $characters = 'characters.txt';
-            print_r($gender_id);
-            $fileWrite = fopen($characters, 'a+');
-            fwrite($fileWrite, '****************************************************************' . PHP_EOL);
-            foreach ($newCharacterCreated as $key => $value) {
-                fwrite($fileWrite, $key . ' - ' . $value . PHP_EOL);
+            $link = Db::getDbLink();
+
+            $query = 'INSERT INTO characters (first_name, second_name, gender, age, s, p, e, c, i ,a, l) VALUES ("' . add_slashes($first_name) . '", "' . add_slashes($last_name) . '", "' . add_slashes($gender) . '", ' . add_slashes($age) . ', ' . add_slashes($s) . ', ' . add_slashes($p) . ', ' . add_slashes($e) . ', ' . add_slashes($c) . ', ' . add_slashes($i) . ', ' . add_slashes($a) . ', ' . add_slashes($l) . ')';
+            $result = mysqli_query($link, $query);
+            if ($result) {
+                $_SESSION['success'] = 'Персонаж успешно создан.';
+                Header('Location: /fallout/index.php');
+                exit;
+            } else {
+                die('Ошибка ');
             }
-            fwrite($fileWrite, '****************************************************************' . PHP_EOL . PHP_EOL);
-            fclose($fileWrite);
-            $_SESSION['success'] = 'Персонаж успешно создан.';
-            Header('Location: index.php');
-            exit;
-        } else {
-            die('Ошибка при создании персонажа');
         }
     }
 }
 ?>
-
 
 <!DOCTYPE html>
 <html>

@@ -37,7 +37,7 @@ session_start();
         }
 
         .success {
-            color: #00ff00;
+            color: blue;
         }
 
         .my-padding {

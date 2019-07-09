@@ -1,6 +1,9 @@
 <?php
 session_start();
 
+require_once($_SERVER['DOCUMENT_ROOT'] . '/fallout/_db.php');
+require_once($_SERVER['DOCUMENT_ROOT'] . '/_functions.php');
+
 $femaleNames = [
     'Emma',
     'Olivia',
@@ -145,17 +148,46 @@ function special()
 }
 
 
+
+$first_name = "Baba";
+$second_name = "Bobo";
+$gender = "Femail";
+$age = 66;
+$s = 3;
+$p = 8;
+$e = 5;
+$c = 7;
+$i = 4;
+$a = 3;
+$l = 6;
 $newCharacterCreated = array_merge(autoNewCharacterCreate($maleNames, $femaleNames, $lastNames), special());
 echo 'Automatic character creation: ';
-$characters = 'characters.txt';
+if($age != 0)
+{
+$link = Db::getDbLink();
 
-$fileWrite = fopen($characters, 'a+');
-fwrite($fileWrite, '****************************************************************' . PHP_EOL);
-foreach ($newCharacterCreated as $key => $value) {
-    fwrite($fileWrite, $key . ' - ' . $value . PHP_EOL);
+$query = 'INSERT INTO characters (first_name, second_name, gender, age, s, p, e, c, i ,a, l) VALUES ("'.add_slashes($first_name).'", "'.add_slashes($second_name).'", "'.add_slashes($gender).'", '.add_slashes($age).', '.add_slashes($s).', '.add_slashes($p).', '.add_slashes($e).', '.add_slashes($c).', '.add_slashes($i).', '.add_slashes($a).', '.add_slashes($l).')';
+$result = mysqli_query($link, $query);
+if($result)
+{
+    $_SESSION['success'] = 'Гонщик успешно добавлен.';
+    Header('Location: /fallout/index.php');
+    exit;
 }
-fwrite($fileWrite, '****************************************************************' . PHP_EOL . PHP_EOL);
-fclose($fileWrite);
-$_SESSION['success'] = 'Персонаж успешно создан.';
-Header('Location: index.php');
+else
+{
+    die('Ошибка ');
+}}
+
+//$characters = 'characters.txt';
+//
+//$fileWrite = fopen($characters, 'a+');
+//fwrite($fileWrite, '****************************************************************' . PHP_EOL);
+//foreach ($newCharacterCreated as $key => $value) {
+//    fwrite($fileWrite, $key . ' - ' . $value . PHP_EOL);
+//}
+//fwrite($fileWrite, '****************************************************************' . PHP_EOL . PHP_EOL);
+//fclose($fileWrite);
+//$_SESSION['success'] = 'Персонаж успешно создан.';
+//Header('Location: index.php');
 

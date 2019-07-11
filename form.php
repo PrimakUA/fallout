@@ -41,11 +41,11 @@ if (isset($_POST['send'])) {
             $query = 'INSERT INTO characters (first_name, second_name, gender, age, s, p, e, c, i ,a, l) VALUES ("' . add_slashes($first_name) . '", "' . add_slashes($last_name) . '", "' . add_slashes($gender) . '", ' . add_slashes($age) . ', ' . add_slashes($s) . ', ' . add_slashes($p) . ', ' . add_slashes($e) . ', ' . add_slashes($c) . ', ' . add_slashes($i) . ', ' . add_slashes($a) . ', ' . add_slashes($l) . ')';
             $result = mysqli_query($link, $query);
             if ($result) {
-                $_SESSION['success'] = 'Персонаж успешно создан.';
+                $_SESSION['success'] = 'Character successfully created!';
                 Header('Location: /fallout/index.php');
                 exit;
             } else {
-                die('Ошибка ');
+                die('Fail ');
             }
         }
     }
@@ -55,50 +55,20 @@ if (isset($_POST['send'])) {
 <!DOCTYPE html>
 <html>
 <head>
-    <title>FalloutPHP10</title>
-    <style>
-        .form-label {
-            width: 150px;
-            float: left;
-        }
-
-        .form-field {
-            width: 300px;
-        }
-
-        .form-field-text {
-            width: 295px;
-        }
-
-        .form-padding {
-            padding-left: 150px;
-        }
-
-        .form-star {
-            color: red;
-        }
-
-        .form-error {
-            color: red;
-        }
-
-        .form-row {
-            padding-bottom: 15px;
-        }
-    </style>
+    <title>Fallout</title>
+    <link rel="stylesheet" href="/fallout/style.css">
 </head>
 <body>
-
-<nav><a href="index.php">Главная</a> | Новый персонаж</nav>
+<nav><a href="index.php">Main</a> | Manual creation</nav>
 <article>
-    <h2>Создание нового персонажа</h2>
+    <h2>Creation new character</h2>
 
     <form action="form.php" method="post">
         <input type="hidden" name="send" value="1">
         <div class="form-row">
-            <label class="form-label">Имя персонажа<span class="form-star">*</span></label>
+            <label class="form-label">First name<span class="form-star">*</span></label>
             <input type="text" class="form-field-text" name="first_name" value="<?php echo $first_name; ?>"
-                   placeholder="Введите имя персонажа">
+                   placeholder="Enter first name">
             <?php
             if (isset($errors['first_name'])) {
                 echo '<div class="form-padding form-error">' . $errors['first_name'] . '</div>';
@@ -107,9 +77,9 @@ if (isset($_POST['send'])) {
         </div>
 
         <div class="form-row">
-            <label class="form-label">Фамилия персонажа<span class="form-star">*</span></label>
+            <label class="form-label">Last name<span class="form-star">*</span></label>
             <input type="text" class="form-field-text" name="last_name" value="<?php echo $last_name; ?>"
-                   placeholder="Введите фамилию персонажа">
+                   placeholder="Enter last name">
             <?php
             echo '<div class="form-padding form-error';
             if (!isset($errors['last_name'])) echo ' hidden';
@@ -120,9 +90,9 @@ if (isset($_POST['send'])) {
         </div>
 
         <div class="form-row">
-            <label class="form-label">Возраст<span class="form-star">*</span></label>
+            <label class="form-label">Age<span class="form-star">*</span></label>
             <input type="text" class="form-field-text" name="age" value="<?php echo $age; ?>"
-                   placeholder="Введите возраст персонажа">
+                   placeholder="Enter age">
             <?php
             if (isset($errors['age'])) {
                 echo '<div class="form-padding form-error">' . $errors['age'] . '</div>';
@@ -131,9 +101,9 @@ if (isset($_POST['send'])) {
         </div>
 
         <div class="form-row">
-            <label class="form-label">Выберите пол<span class="form-star">*</span></label>
+            <label class="form-label">Set gender<span class="form-star">*</span></label>
             <select class="form-field" name="gender_id">
-                <option value="0">Выберите пол</option>
+                <option value="0">Set gender</option>
                 <?php
                 $gender = [1 => 'Male', 2 => 'Female'];
                 foreach ($gender as $key => $value) {
@@ -152,8 +122,8 @@ if (isset($_POST['send'])) {
 
         <div class="form-row">
             <div class="form-padding">
-                <input type="submit" value="Сохранить">
-                <input type="reset" value="Очистить">
+                <input type="submit" value="Save">
+                <input type="reset" value="Clear">
             </div>
         </div>
     </form>

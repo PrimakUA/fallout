@@ -5,16 +5,16 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/fallout/_db.php');
 
 $link = Db::getDbLink();
 
-$q_teams_all = "SELECT COUNT(*) FROM `teams`";
-$r_teams_all = mysqli_query($link, $q_teams_all);
-$teams_count_all = mysqli_fetch_row($r_teams_all)[0];
-$items_on_page = 15;
-$num_pages = ceil($teams_count_all / $items_on_page);
+$q_characters_all = "SELECT COUNT(*) FROM characters";
+$r_characters_all = mysqli_query($link, $q_characters_all);
+$characters_count_all = mysqli_fetch_row($r_characters_all)[0];
+$items_on_page = 10;
+$num_pages = ceil($characters_count_all / $items_on_page);
 $page = (isset($_GET['page'])) ? $_GET['page'] : 1;
 $page = max(1, min($num_pages, intval($page)));
 
 // сортировка
-$sort = isset($_GET["sort"]) ? $_GET["sort"] : 'name';
+$sort = isset($_GET["sort"]) ? $_GET["sort"] : 'id';
 $sort_by = isset($_GET["sort_by"]) ? 1 : 0;
 if ($sort_by == 1) {
     $asc = " DESC";
@@ -28,10 +28,11 @@ if ($sort_by == 1) {
     $down = 0;
 }
 $sorts = [
-    'id' => ['t.id ' . $asc, $up],
-    'name' => ['t.name ' . $asc, $up],
-    'constructor' => ['t.constructor ' . $asc, $up],
-    'country' => ['country_name ' . $asc, $up],
+    'id' => ['id ' . $asc, $up],
+    'first_name' => ['first_name ' . $asc, $up],
+    'second_name' => ['second_name ' . $asc, $up],
+    'gender' => ['gender ' . $asc, $up],
+    'age' => ['age ' . $asc, $up]
 ];
 $par_sort = ' ORDER BY ' . $sorts[$sort][0];
 if ($sorts[$sort][1] == 1) {
@@ -43,25 +44,31 @@ if ($sorts[$sort][1] == 1) {
 }
 
 
-$q_teams = 'SELECT t.*, c.alias AS country_alias, c.name AS country_name FROM teams t
-            LEFT JOIN countries c ON c.id=t.country_id
-            ' . $par_sort . ' LIMIT ' . ($page - 1) * $items_on_page . ', ' . $items_on_page;
+$q_characters = 'SELECT * FROM characters' . $par_sort . ' LIMIT ' . ($page - 1) * $items_on_page . ', ' . $items_on_page;
 
-//echo $q_teams;
-$r_teams = mysqli_query($link, $q_teams);
-$teams_count = mysqli_num_rows($r_teams);
+$r_characters = mysqli_query($link, $q_characters);
+$characters_count = mysqli_num_rows($r_characters);
 ?>
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Formula 1</title>
+    <title>Fallout</title>
     <link rel="stylesheet" href="/fallout/style.css">
 </head>
 <body bgcolor="#f5f5f5">
 
-<nav><a href="/fallout/index.php">Главная</a> | Персонажи</nav>
+<nav><a href="/fallout/index.php">Main</a> | Characters</nav>
 <article>
-    <h2>Список команд</h2>
+    <div style="width:670px;" class="my-padding">
+        <?php
+        if (isset($_SESSION['success'])) {
+            echo '<div class="success">' . $_SESSION['success'] . '</div>';
+            unset($_SESSION['success']);
+        }
+        ?>
+    </div>
+
+    <h2>Characters list</h2>
     <div class="my-padding">
         <?php
         if (isset($_SESSION['success'])) {
@@ -75,37 +82,49 @@ $teams_count = mysqli_num_rows($r_teams);
             ?>
             <table cellspacing="0" border="1" class="my-table">
                 <tr>
-                    <th width="50"><a href="teams.php?sort=id<?php echo getParStr($url_params);
+                    <th width="50"><a href="list.php?sort=id<?php echo getParStr($url_params);
                         if ($sort == 'id' && !$sort_by) echo '&sort_by=1'; ?>">Id<?php if ($sort == 'id') echo ' <span title="Отсортировано в ' . $sortstr . ' порядке">' . $order . '</span>'; ?></a>
                     </th>
-                    <th width="250"><a href="teams.php?sort=name<?php echo getParStr($url_params);
-                        if ($sort == 'name' && !$sort_by) echo '&sort_by=1'; ?>">Команда<?php if ($sort == 'name') echo ' <span title="Отсортировано в ' . $sortstr . ' порядке">' . $order . '</span>'; ?></a>
+                    <th width="250"><a href="list.php?sort=first_name<?php echo getParStr($url_params);
+                        if ($sort == 'first_name' && !$sort_by) echo '&sort_by=1'; ?>">Name<?php if ($sort == 'first_name') echo ' <span title="Отсортировано в ' . $sortstr . ' порядке">' . $order . '</span>'; ?></a>
                     </th>
-                    <th width="200"><a href="teams.php?sort=constructor<?php echo getParStr($url_params);
-                        if ($sort == 'constructor' && !$sort_by) echo '&sort_by=1'; ?>">Конструктор<?php if ($sort == 'constructor') echo ' <span title="Отсортировано в ' . $sortstr . ' порядке">' . $order . '</span>'; ?></a>
+                    <th width="200"><a href="list.php?sort=second_name<?php echo getParStr($url_params);
+                        if ($sort == 'second_name' && !$sort_by) echo '&sort_by=1'; ?>">Last
+                            name<?php if ($sort == 'second_name') echo ' <span title="Отсортировано в ' . $sortstr . ' порядке">' . $order . '</span>'; ?></a>
                     </th>
-                    <th width="150"><a href="teams.php?sort=country<?php echo getParStr($url_params);
-                        if ($sort == 'country' && !$sort_by) echo '&sort_by=1'; ?>">Страна<?php if ($sort == 'country') echo ' <span title="Отсортировано в ' . $sortstr . ' порядке">' . $order . '</span>'; ?></a>
+                    <th width="150"><a href="list.php?sort=gender<?php echo getParStr($url_params);
+                        if ($sort == 'gender' && !$sort_by) echo '&sort_by=1'; ?>">Gender<?php if ($sort == 'gender') echo ' <span title="Отсортировано в ' . $sortstr . ' порядке">' . $order . '</span>'; ?></a>
                     </th>
-                    <th width="70"></th>
+                    <th width="50"><a href="list.php?sort=age<?php echo getParStr($url_params);
+                        if ($sort == 'age' && !$sort_by) echo '&sort_by=1'; ?>">Age<?php if ($sort == 'age') echo ' <span title="Отсортировано в ' . $sortstr . ' порядке">' . $order . '</span>'; ?></a>
+                    </th>
+                    <th width="20">S</th>
+                    <th width="20">P</th>
+                    <th width="20">E</th>
+                    <th width="20">C</th>
+                    <th width="20">I</th>
+                    <th width="20">A</th>
+                    <th width="20">L</th>
                 </tr>
                 <?php
-                for ($i = 0; $i < $teams_count; $i++) {
-                    $row = mysqli_fetch_assoc($r_teams);
+                for ($i = 0; $i < $characters_count; $i++) {
+                    $row = mysqli_fetch_assoc($r_characters);
 
                     echo '<tr>
                             <td>' . $row['id'] . '</td>
-                            <td>' . $row['name'] . '</td>
-                            <td>' . $row['constructor'] . '</td>
-                            <td><img src="' . getFlag($row['country_alias']) . '" width="20"> ' . $row['country_name'] . '</td>
-                            <td>
-                                <a href="view_team.php?id=' . $row['id'] . '">П</a>
-                                <a href="edit_team.php?id=' . $row['id'] . '">Р</a>
-                                <a href="#" onclick="if(window.confirm(\'Вы действительно хотите удалить команду?\')) { window.location = \'delete_team.php?id=' . htmlspecialchars($row['id']) . '\'; } return false;">У</a>
-                            </td>
+                            <td>' . $row['first_name'] . '</td>
+                            <td>' . $row['second_name'] . '</td>
+                            <td>' . $row['gender'] . '</td>
+                            <td>' . $row['age'] . '</td>
+                            <td>' . $row['s'] . '</td>
+                            <td>' . $row['p'] . '</td>
+                            <td>' . $row['e'] . '</td>
+                            <td>' . $row['c'] . '</td>
+                            <td>' . $row['i'] . '</td>
+                            <td>' . $row['a'] . '</td>
+                            <td>' . $row['l'] . '</td>
                     </tr>';
                 }
-
                 ?>
             </table>
 
@@ -113,16 +132,8 @@ $teams_count = mysqli_num_rows($r_teams);
                 <div style="text-align: center;">
                     Страница:
                     <?php
-                    /*for($i=0; $i<$num_pages; $i++) {
-                        if (($i+1) == $page) {
-                            echo ($i+1)." ";
-                        } else {
-                            echo '<a href="'.$_SERVER['PHP_SELF'].'?page='.($i+1).'">'.($i+1)."</a> ";
-                        }
-                    }*/
-
                     $url_params = ['sort', 'sort_by'];
-                    $url = 'teams.php?' . getParStr($url_params);
+                    $url = 'list.php?' . getParStr($url_params);
                     makePager($page, $num_pages, 2, $url);
                     ?>
                 </div>

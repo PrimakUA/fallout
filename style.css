@@ -1,0 +1,45 @@
+.form-label {
+    width: 150px;
+    float: left;
+}
+.form-left {
+    float: left;
+}
+.form-field {
+    width: 300px;
+}
+.form-field-text {
+    width: 295px;
+}
+.form-padding {
+    padding-left: 150px;
+}
+.form-star {
+    color: red;
+}
+.form-error {
+    color: red;
+}
+.form-row {
+    padding-bottom: 15px;
+}
+.hidden {
+    display: none;
+}
+.color-number {
+    color: #ffff00;
+}
+.success {
+     color: #00ff00;
+}
+.my-padding {
+    padding-left: 160px;
+}
+.my-table {
+    border: 1px #555555 solid;
+    border-collapse: collapse;
+}
+.form-padding-delete {
+    padding-left: 160px;
+    padding-bottom: 15px;
+}

@@ -51,7 +51,7 @@ session_start();
     </style>
 </head>
 <body bgcolor="#f5f5f5">
-
+<nav>Главная | <a href="/fallout/list.php">Список персонажей</a></nav>
 <article>
     <h1>Главная</h1>
     <form action="index.php" method="post">

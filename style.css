@@ -43,3 +43,7 @@
     padding-left: 160px;
     padding-bottom: 15px;
 }
+
+td {
+    text-align: center; /* Выравниваем текст по центру ячейки */
+}

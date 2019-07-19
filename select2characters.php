@@ -77,25 +77,24 @@ $characters_count = mysqli_num_rows($r_characters);
         }
         ?>
         <div style="width: 720px;">
+            <form method="POST" action="test.php">
             <?php
             $url_params = ['page'];
             ?>
             <table cellspacing="0" border="1" class="my-table">
                 <tr>
-                    <th width="50"><a href="list.php?sort=id<?php echo getParStr($url_params);
-                        if ($sort == 'id' && !$sort_by) echo '&sort_by=1'; ?>">Id<?php if ($sort == 'id') echo ' <span title="Отсортировано в ' . $sortstr . ' порядке">' . $order . '</span>'; ?></a>
-                    </th>
-                    <th width="200"><a href="list.php?sort=first_name<?php echo getParStr($url_params);
+                    <th width="50">Select</th>
+                    <th width="200"><a href="select2characters.php?sort=first_name<?php echo getParStr($url_params);
                         if ($sort == 'first_name' && !$sort_by) echo '&sort_by=1'; ?>">Name<?php if ($sort == 'first_name') echo ' <span title="Отсортировано в ' . $sortstr . ' порядке">' . $order . '</span>'; ?></a>
                     </th>
-                    <th width="200"><a href="list.php?sort=second_name<?php echo getParStr($url_params);
+                    <th width="200"><a href="select2characters.php?sort=second_name<?php echo getParStr($url_params);
                         if ($sort == 'second_name' && !$sort_by) echo '&sort_by=1'; ?>">Last
                             name<?php if ($sort == 'second_name') echo ' <span title="Отсортировано в ' . $sortstr . ' порядке">' . $order . '</span>'; ?></a>
                     </th>
-                    <th width="150"><a href="list.php?sort=gender<?php echo getParStr($url_params);
+                    <th width="150"><a href="select2characters.php?sort=gender<?php echo getParStr($url_params);
                         if ($sort == 'gender' && !$sort_by) echo '&sort_by=1'; ?>">Gender<?php if ($sort == 'gender') echo ' <span title="Отсортировано в ' . $sortstr . ' порядке">' . $order . '</span>'; ?></a>
                     </th>
-                    <th width="50"><a href="list.php?sort=age<?php echo getParStr($url_params);
+                    <th width="50"><a href="select2characters.php?sort=age<?php echo getParStr($url_params);
                         if ($sort == 'age' && !$sort_by) echo '&sort_by=1'; ?>">Age<?php if ($sort == 'age') echo ' <span title="Отсортировано в ' . $sortstr . ' порядке">' . $order . '</span>'; ?></a>
                     </th>
                     <th width="20">S</th>
@@ -112,7 +111,7 @@ $characters_count = mysqli_num_rows($r_characters);
                     $row = mysqli_fetch_assoc($r_characters);
 
                     echo '<tr>
-                            <td>' . $row['id'] . '</td>
+                            <td><INPUT name="iid[]" type="checkbox" value=' . $row['id'] . '></td>
                             <td>' . $row['first_name'] . '</td>
                             <td>' . $row['second_name'] . '</td>
                             <td>' . $row['gender'] . '</td>
@@ -128,8 +127,11 @@ $characters_count = mysqli_num_rows($r_characters);
                                 <a href="#" onclick="if(window.confirm(\'Delete?\')) { window.location = \'/delete.php?id=' . htmlspecialchars($row['id']) . '\'; } return false;">delete</a>
                             </td>
                     </tr>';
+
                 }
                 ?>
+                <INPUT type="submit" value="Отправить">
+                </form>
             </table>
 
             <?php if ($num_pages > 1) : ?>
@@ -137,7 +139,7 @@ $characters_count = mysqli_num_rows($r_characters);
                     Страница:
                     <?php
                     $url_params = ['sort', 'sort_by'];
-                    $url = 'list.php?' . getParStr($url_params);
+                    $url = 'select2characters.php?' . getParStr($url_params);
                     makePager($page, $num_pages, 2, $url);
                     ?>
                 </div>

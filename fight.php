@@ -1,331 +1,96 @@
 <?php
 
-$fallout = function () {
+require_once($_SERVER['DOCUMENT_ROOT'] . '/fallout/_functions.php');
+require_once($_SERVER['DOCUMENT_ROOT'] . '/fallout/_db.php');
 
-    fwrite(STDOUT, "Enter 1 to create characters manually, or 2 to automatically create: ");
+$link = Db::getDbLink();
+$q_all = "SELECT COUNT(*) FROM characters";
+$r_all = mysqli_query($link, $q_all);
+$characters_all = mysqli_fetch_row($r_all)[0];
+$first_character = mysqli_fetch_assoc($r_all);
+print_r($first_character);
+$random_select1 = rand(1, $characters_all);
+$random_select2 = rand(1, $characters_all);
 
-    $femaleNames = [
-        'Emma',
-        'Olivia',
-        'Ava',
-        'Isabella',
-        'Sophia',
-        'Charlotte',
-        'Mia',
-        'Amelia',
-        'Harper',
-        'Evelyn',
-        'Abigail',
-        'Emily',
-        'Elizabeth',
-        'Mila',
-        'Ella',
-        'Avery',
-        'Sofia',
-        'Camila',
-        'Aria',
-        'Scarlett',
-        'Victoria',
-        'Madison',
-        'Luna',
-        'Grace',
-        'Chloe',
-        'Penelope',
-        'Layla',
-        'Riley',
-        'Zoey',
-        'Nora'];
-    $maleNames = [
-        'Liam',
-        'Noah',
-        'William',
-        'James',
-        'Oliver',
-        'Benjamin',
-        'Elijah',
-        'Lucas',
-        'Mason',
-        'Logan',
-        'Alexander',
-        'Ethan',
-        'Jacob',
-        'Michael',
-        'Daniel',
-        'Henry',
-        'Jackson',
-        'Sebastian',
-        'Aiden',
-        'Matthew',
-        'Samuel',
-        'David',
-        'Joseph',
-        'Carter',
-        'Owen',
-        'Wyatt',
-        'John',
-        'Jack',
-        'Luke',
-        'Jayden'];
-    $lastNames = [
-        'Smith',
-        'Johnson',
-        'Williams',
-        'Jones',
-        'Brown',
-        'Davis',
-        'Miller',
-        'Wilson',
-        'Moore',
-        'Taylor',
-        'Anderson',
-        'Thomas',
-        'Jackson',
-        'White',
-        'Harris',
-        'Martin',
-        'Thompson',
-        'Garcia',
-        'Martinez',
-        'Robinson',
-        'Clark',
-        'Rodriguez',
-        'Lewis',
-        'Lee',
-        'Walker',
-        'Hall',
-        'Allen',
-        'Young',
-        'Hernandez',
-        'King'];
+$first_character_q = 'SELECT * FROM characters where id = ' . $random_select1;
+$r_character_first = mysqli_query($link, $first_character_q);
+$first_character = mysqli_fetch_assoc($r_character_first);
 
-    $special = ['S', 'P', 'E', 'C', 'I', 'A', 'L'];
+$second_character_q = 'SELECT * FROM characters where id = ' . $random_select2;
+$r_character_second = mysqli_query($link, $second_character_q);
+$second_character = mysqli_fetch_assoc($r_character_second);
 
-    function newCharacterCreate()
-    {
+function get_health(array $player)
+{
+    $health = 70 + ($player['e'] * 3);
+    return $health;
+}
 
+function get_damage($player1, $player2)
+{
+    $min = round((($player1['s'] * 2) - $player2['l']) / 2);
+    if ($min >= 0) {
+        $min_damage = $min;
+    } else
+        $min_damage = 0;
 
-        fwrite(STDOUT, "Enter name: ");
-        $name = trim(fgets(STDIN));
-        fwrite(STDOUT, "Enter last Name: ");
-        $lastname = trim(fgets(STDIN));
-        fwrite(STDOUT, "Enter age: ");
-        $age = trim(fgets(STDIN));
-        fwrite(STDOUT, "Enter gender: 1-Male ,2 - Female ");
-        $gender = trim(fgets(STDIN));
-        if ($gender == 1) {
-            $sex = 'Male';
-        } else $sex = 'Female';
+    $max_damage = round($player1['s'] + $player1['l']);
 
-        $newCharacterHandCreate[] = $name . ' ' . $lastname . ' ' . $age . ' ' . $sex;
+    $damage = [$min_damage, $max_damage];
+    return $damage;
+}
+function preview($first_character, $second_character)
+{
+    $damage_first_character = get_damage($first_character, $second_character);
+    $damage_second_character = get_damage($second_character, $first_character);
+    echo $first_character['first_name'] . ' ' . $first_character['second_name'] . ' has ' . get_health($first_character) . ' HP, and can cause damage max - ' . $damage_first_character[1] . ' HP.' . '<br>';
+    echo $second_character['first_name'] . ' ' . $second_character['second_name'] . ' has ' . get_health($second_character) . ' HP, and can cause damage max - ' . $damage_second_character[1] . ' HP.' . '<br>';
 
-        return $newCharacterHandCreate;
+}
 
-    }
+function fight_calculate($first_character, $second_character)
+{
 
+    $first_character_current_health = get_health($first_character);
+    $second_character_current_health = get_health($second_character);
+    $i = 1;
+        echo "************** FIGHT **************" . '<br>';
 
-    function autoNewCharacterCreate(array $maleNames, array $femaleNames, array $lastNames)
-    {
-        $newCharacter = [];
-        $genderType = 'Female';
-        $genderCreate = rand(0, 1);
-        $gender = '';
-        if ($genderCreate == 1) {
-            $gender = $maleNames;
-            $genderType = 'Male';
-        } else $gender = $femaleNames;
+    while ($first_character_current_health > 0 && $second_character_current_health > 0) {
 
-        $age = rand(16, 50);
+        $first_character_dmg = rand(get_damage($first_character, $second_character)[0], (get_damage($first_character, $second_character)[1]));
+        $second_character_dmg = rand(get_damage($second_character, $first_character)[0], get_damage($second_character, $first_character)[1]);
 
-        $keyName = array_rand($gender);
-        $newName = $gender[$keyName];
+        echo "************** ROUND" . $i . " **************" . '<br>';
 
-        $keyLastName = array_rand($lastNames);
-        $newLastName = $lastNames[$keyLastName];
+        echo ">>>" . $first_character['first_name'] . " " . $first_character['second_name'] . " hits " . $second_character['first_name'] . " " . $second_character['second_name'] . " and deals " . $first_character_dmg . " damage" . '<br>';
+        $second_character_current_health -= $first_character_dmg;
+        echo $second_character['first_name'] . " " . $second_character['second_name'] . " has " . $second_character_current_health . " health left" . '<br>';
 
-        $newCharacter[] = $newName . ' ' . $newLastName . ' ' . $age . ' ' . $genderType;
-
-        return $newCharacter;
-    }
-
-
-    function skillDiv($nameOfSkills, $sumOfSkills, $maxScore)
-    {
-        $groupMembers = count($nameOfSkills);
-        $maxSum = $sumOfSkills;
-        $maxValue = $maxScore;
-
-        $groups = array();
-        $member = 0;
-
-        /*
-        Проверяем наполняемый массив $groups. Если сумма элементов менее $sumOfSkills, разбрасываем остаток между элементами массива $groups.
-        */
-        while ((array_sum($groups) != $maxSum)) {
-            $res = rand(1, intval($maxSum / rand(intval($maxSum / $maxValue), $maxSum)));
-            $groups[$member] = $res;
-            if (++$member == $groupMembers) {
-                $member = 0;
-            }
-        }
-        /*
-        Объединяем полученный массив с массивом $SPECIAL (его содержимое станет ключами) и получаем новый массив $resultArray с соответствием названиями скилов и уровней.
-        */
-        $resultArray = array_combine($nameOfSkills, $groups);
-        return $resultArray;
-    }
-
-    $characterChoice = trim(fgets(STDIN));
-    if ($characterChoice == 1) {
-        $handCreate = 0;
-        $newCharacterCreated = array_merge(newCharacterCreate(), skillDiv($special, 40, 10));
-        echo 'Manual creation: ';
-        print_r($newCharacterCreated);
-
-    } elseif ($characterChoice == 2) {
-        $newCharacterCreated = array_merge(autoNewCharacterCreate($maleNames, $femaleNames, $lastNames), skillDiv($special, 40, 10));
-        echo 'Automatic character creation: ';
-        print_r($newCharacterCreated);
-
-    } elseif ($characterChoice == 22 || $characterChoice == 11){
-        $firstCharacterCreated = array_merge(autoNewCharacterCreate($maleNames, $femaleNames, $lastNames), skillDiv($special, 40, 10));
-        $secondCharacterCreated = array_merge(autoNewCharacterCreate($maleNames, $femaleNames, $lastNames), skillDiv($special, 40, 10));
-        echo 'First character: ';
-        print_r($firstCharacterCreated);
-        echo 'Second character: ';
-        print_r($secondCharacterCreated);
-    }
-
-    else echo 'Invalid input';
-
-    function get_name($player) {
-
-
-        $full_string = $player[0];
-        $space_counter = 0;
-        $name_length = "";
-
-        for ($i = 0; $i < mb_strlen($full_string); $i++) {
-
-            if ($space_counter == 2) {
-                $name_length = $i - 1;;
-                break;
-            }
-
-            if ($full_string[$i] == " ") {
-                ++$space_counter;
-            }
-
-        }
-        $name = substr($full_string, 0, intval($name_length));
-        return $name;
-
-    }
-
-    $player1_name = get_name($firstCharacterCreated);
-    $player2_name = get_name($secondCharacterCreated);
-
-    function get_damage($player){
-
-        $p_lower_damage_limit = round($player[S] / 2 + 1);
-        $p_higher_damage_limit = round($player[S] / 2 + 4);
-
-        $damage_values = [$p_lower_damage_limit, $p_higher_damage_limit];
-        return $damage_values;
-
-    };
-
-    $player1_damage = get_damage($firstCharacterCreated);
-    $player2_damage = get_damage($secondCharacterCreated);
-
-
-    function get_health($player) {
-
-        $health = 30 + $player[S] + ($player[E] * 2);
-        return $health;
-
-    }
-
-    $player1_health = get_health($firstCharacterCreated);
-    $player2_health = get_health($secondCharacterCreated);
-
-    function fight($player1_name, $player2_name, $player1_damage, $player2_damage, $player1_health, $player2_health) {
-
-        $player_1_announcement = $player1_name . " has " . $player1_health . "HP " . "and has a weapon equipped with " . $player1_damage[0] . " - " . $player1_damage[1] . " Damage" . PHP_EOL;
-        $player_2_announcement = $player2_name . " has " . $player2_health . "HP " . "and has a weapon equipped with " . $player2_damage[0] . " - " . $player2_damage[1] . " Damage" . PHP_EOL;
-        echo $player_1_announcement;
-        echo $player_2_announcement;
-
-        $fighter_1 = [$player1_name, $player1_damage, $player1_health];
-        $fighter_2 = [$player2_name, $player2_damage, $player2_health];
-
-
-        fwrite(STDOUT, "Press 1 to for them to fight ");
-        $starter = trim(fgets(STDIN));
-
-        function fight_calculate($fighter_1, $fighter_2) {
-
-            $fighter_1_curr_health = $fighter_1[2];
-            $fighter_2_curr_health = $fighter_2[2];
-            $i = 1;
-
-            while ($fighter_1_curr_health > 0 && $fighter_2_curr_health > 0) {
-
-                $player1_dmg = rand($fighter_1[1][0], $fighter_1[1][1]);
-                $player2_dmg = rand($fighter_2[1][0], $fighter_2[1][1]);
-
-                echo "************** ROUND". $i . " **************" . PHP_EOL;
-
-                echo ">>>" . $fighter_1[0] . " hits " . $fighter_2[0] . " and deals " . $player1_dmg . " damage" . PHP_EOL;
-                $fighter_2_curr_health -= $player1_dmg;
-                echo $fighter_2[0] . " has " . $fighter_2_curr_health . " health left" . PHP_EOL;
-
-                if ($fighter_1_curr_health) {
-                    echo $fighter_2[0] . " hits " . $fighter_1[0] . " and deals " . $player2_dmg . " damage" . PHP_EOL;
-                    $fighter_1_curr_health -= $player2_dmg;
-                    echo ">>>" . $fighter_1[0] . " has " . $fighter_1_curr_health . " health left" . PHP_EOL;
-                } else {
-                    break;
-                }
-
-                $i++;
-            }
-
-            echo "************** WE HAVE A WINNER **************" . PHP_EOL;
-
-            if ($fighter_2_curr_health <= 0) {
-                echo $fighter_1[0] . " WINS!" . " | " . $fighter_2[0] . " bites the dust." . PHP_EOL;
-                return true;
-            } else if ($fighter_1_curr_health <= 0) {
-                echo $fighter_2[0] . " WINS!" . " | " . $fighter_1[0] . " bites the dust." . PHP_EOL;
-                return true;
-            }
-
-            return true;
-        }
-
-        if ($starter == 1) {
-            echo "************** FIGHT **************" . PHP_EOL;
-            fight_calculate($fighter_1, $fighter_2);
+        if ($first_character_current_health) {
+            echo $second_character['first_name'] . " " . $second_character['second_name'] . " hits " . $first_character['first_name'] . " " . $first_character['second_name'] . " and deals " . $second_character_dmg . " damage" . '<br>';
+            $first_character_current_health -= $second_character_dmg;
+            echo ">>>" . $first_character['first_name'] . " " . $first_character['second_name'] . " has " . $first_character_current_health . " health left" . '<br>';
         } else {
-            return false;
+            break;
         }
 
+        $i++;
     }
 
-    fight($player1_name, $player2_name, $player1_damage, $player2_damage, $player1_health, $player2_health);
+    echo "************** WE HAVE A WINNER **************" . '<br>';
 
-};
-
-$fallout();
-
-
-
-
-
-
-
-
-
+    if ($second_character_current_health <= 0) {
+        echo $first_character['first_name'] . " " . $first_character['second_name'] . " WINS!" . " | " . $second_character['first_name'] . " " . $second_character['second_name'] . " bites the dust." . '<br>';
+        return true;
+    } else if ($first_character_current_health <= 0) {
+        echo $second_character['first_name'] . " " . $second_character['second_name'] . " WINS!" . " | " . $first_character['first_name'] . " " . $first_character['second_name'] . " bites the dust." . '<br>';
+        return true;
+    }
+    return true;
+}
+echo preview($first_character, $second_character);
+echo fight_calculate($first_character, $second_character);
 
 
 

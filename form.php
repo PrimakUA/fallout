@@ -42,7 +42,7 @@ if (isset($_POST['send'])) {
             $result = mysqli_query($link, $query);
             if ($result) {
                 $_SESSION['success'] = 'Character successfully created!';
-                Header('Location: /fallout/index.php');
+                Header('Location: /fallout/index.html');
                 exit;
             } else {
                 die('Fail ');

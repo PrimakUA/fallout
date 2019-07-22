@@ -4,19 +4,21 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/fallout/_functions.php');
 require_once($_SERVER['DOCUMENT_ROOT'] . '/fallout/_db.php');
 
 $link = Db::getDbLink();
-$q_all = "SELECT COUNT(*) FROM characters";
+$q_all = "SELECT id FROM characters";
 $r_all = mysqli_query($link, $q_all);
-$characters_all = mysqli_fetch_row($r_all)[0];
-$first_character = mysqli_fetch_assoc($r_all);
-print_r($first_character);
-$random_select1 = rand(1, $characters_all);
-$random_select2 = rand(1, $characters_all);
+$id_characters = mysqli_fetch_all($r_all);
+$pqs_id_characters = count($id_characters);
+$random_select1 = rand(1, $pqs_id_characters);
+$random_select2 = rand(1, $pqs_id_characters);
+$random_select1_id = $id_characters[$random_select1 -1];
+$random_select2_id = $id_characters[$random_select2 -1];
 
-$first_character_q = 'SELECT * FROM characters where id = ' . $random_select1;
+
+$first_character_q = 'SELECT * FROM characters where id = ' . $random_select1_id[0];
 $r_character_first = mysqli_query($link, $first_character_q);
 $first_character = mysqli_fetch_assoc($r_character_first);
 
-$second_character_q = 'SELECT * FROM characters where id = ' . $random_select2;
+$second_character_q = 'SELECT * FROM characters where id = ' . $random_select2_id[0];
 $r_character_second = mysqli_query($link, $second_character_q);
 $second_character = mysqli_fetch_assoc($r_character_second);
 
@@ -82,12 +84,12 @@ function fight_calculate($first_character, $second_character)
 
     if ($second_character_current_health <= 0) {
         echo $first_character['first_name'] . " " . $first_character['second_name'] . " WINS!" . " | " . $second_character['first_name'] . " " . $second_character['second_name'] . " bites the dust." . '<br>';
-        return true;
+        return '.';
     } else if ($first_character_current_health <= 0) {
         echo $second_character['first_name'] . " " . $second_character['second_name'] . " WINS!" . " | " . $first_character['first_name'] . " " . $first_character['second_name'] . " bites the dust." . '<br>';
-        return true;
+        return '.';
     }
-    return true;
+    return '.';
 }
 echo preview($first_character, $second_character);
 echo fight_calculate($first_character, $second_character);

@@ -23,10 +23,10 @@ $q_characters = 'SELECT * FROM characters';
 $r_characters = mysqli_query($link, $q_characters);
 $characters_count = mysqli_num_rows($r_characters);
 $row = mysqli_fetch_assoc($r_characters);
-var_dump($row['id']);
+var_dump($row);
 
 $q_all_id = "SELECT id FROM characters";
 $r_all = mysqli_query($link, $q_all_id);
 $fir = mysqli_num_rows($r_all);
-$row = mysqli_fetch_assoc($fir);
+
 

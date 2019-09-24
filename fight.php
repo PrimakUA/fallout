@@ -2,77 +2,52 @@
 
 require_once($_SERVER['DOCUMENT_ROOT'] . '/fallout/_functions.php');
 require_once($_SERVER['DOCUMENT_ROOT'] . '/fallout/_db.php');
-
-$link = Db::getDbLink();
-$q_all = "SELECT id FROM characters";
-$r_all = mysqli_query($link, $q_all);
-$id_characters = mysqli_fetch_all($r_all);
-$pqs_id_characters = count($id_characters);
-$random_select1 = rand(1, $pqs_id_characters);
-$random_select2 = rand(1, $pqs_id_characters);
-$random_select1_id = $id_characters[$random_select1 -1];
-$random_select2_id = $id_characters[$random_select2 -1];
+require_once($_SERVER['DOCUMENT_ROOT'] . '/fallout/classes/Character.php');
 
 
-$first_character_q = 'SELECT * FROM characters where id = ' . $random_select1_id[0];
-$r_character_first = mysqli_query($link, $first_character_q);
-$first_character = mysqli_fetch_assoc($r_character_first);
+$character1 = new Character;
+$character2 = new Character;
 
-$second_character_q = 'SELECT * FROM characters where id = ' . $random_select2_id[0];
-$r_character_second = mysqli_query($link, $second_character_q);
-$second_character = mysqli_fetch_assoc($r_character_second);
+$firstCharacterObj = $character1->getRandomPerson();
+$secondCharacterObj = $character2->getRandomPerson();
 
-function get_health(array $player)
+
+function preview($firstCharacterObj, $secondCharacterObj)
 {
-    $health = 70 + ($player['e'] * 3);
-    return $health;
-}
-
-function get_damage($player1, $player2)
-{
-    $min = round((($player1['s'] * 2) - $player2['l']) / 2);
-    if ($min >= 0) {
-        $min_damage = $min;
-    } else
-        $min_damage = 0;
-
-    $max_damage = round($player1['s'] + $player1['l']);
-
-    $damage = [$min_damage, $max_damage];
-    return $damage;
-}
-function preview($first_character, $second_character)
-{
-    $damage_first_character = get_damage($first_character, $second_character);
-    $damage_second_character = get_damage($second_character, $first_character);
-    echo $first_character['first_name'] . ' ' . $first_character['second_name'] . ' has ' . get_health($first_character) . ' HP, and can cause damage max - ' . $damage_first_character[1] . ' HP.' . '<br>';
-    echo $second_character['first_name'] . ' ' . $second_character['second_name'] . ' has ' . get_health($second_character) . ' HP, and can cause damage max - ' . $damage_second_character[1] . ' HP.' . '<br>';
+    $damageFirstCharacter = $firstCharacterObj->getDamage($secondCharacterObj->lucky);
+    $damageSecondCharacter = $secondCharacterObj->getDamage($firstCharacterObj->lucky);
+    echo $firstCharacterObj->firstName . ' ' . $firstCharacterObj->secondName . ' has ' . $firstCharacterObj->getHealth() . ' HP, and can cause damage max - ' . $damageFirstCharacter['max'] . ' HP.' . '<br>';
+    echo $secondCharacterObj->firstName . ' ' . $secondCharacterObj->secondName . ' has ' . $secondCharacterObj->getHealth() . ' HP, and can cause damage max - ' . $damageSecondCharacter['max'] . ' HP.' . '<br>';
 
 }
 
-function fight_calculate($first_character, $second_character)
+
+function fight_calculate($firstCharacterObj, $secondCharacterObj)
 {
 
-    $first_character_current_health = get_health($first_character);
-    $second_character_current_health = get_health($second_character);
+    $first_character_current_health = $firstCharacterObj->getHealth();
+    $second_character_current_health = $secondCharacterObj->getHealth();
     $i = 1;
-        echo "************** FIGHT **************" . '<br>';
+    echo "************** FIGHT **************" . '<br>';
 
     while ($first_character_current_health > 0 && $second_character_current_health > 0) {
 
-        $first_character_dmg = rand(get_damage($first_character, $second_character)[0], (get_damage($first_character, $second_character)[1]));
-        $second_character_dmg = rand(get_damage($second_character, $first_character)[0], get_damage($second_character, $first_character)[1]);
+        $damageFirstCharacter = $firstCharacterObj->getDamage($secondCharacterObj->lucky);
+        $damageSecondCharacter = $secondCharacterObj->getDamage($firstCharacterObj->lucky);
+
+        $first_character_dmg = rand($damageFirstCharacter['min'], $damageFirstCharacter['max']);
+        $second_character_dmg = rand($damageSecondCharacter['min'], $damageSecondCharacter['max']);
 
         echo "************** ROUND" . $i . " **************" . '<br>';
 
-        echo ">>>" . $first_character['first_name'] . " " . $first_character['second_name'] . " hits " . $second_character['first_name'] . " " . $second_character['second_name'] . " and deals " . $first_character_dmg . " damage" . '<br>';
+        echo ">>>" . $firstCharacterObj->firstName . " " . $firstCharacterObj->secondName . " hits " . $secondCharacterObj->firstName . " " . $secondCharacterObj->secondName . " and deals " . $first_character_dmg . " damage" . '<br>';
         $second_character_current_health -= $first_character_dmg;
-        echo $second_character['first_name'] . " " . $second_character['second_name'] . " has " . $second_character_current_health . " health left" . '<br>';
+        echo $secondCharacterObj->firstName  . " " . $secondCharacterObj->secondName . " has " . $second_character_current_health . " health left" . '<br>';
 
         if ($first_character_current_health) {
-            echo $second_character['first_name'] . " " . $second_character['second_name'] . " hits " . $first_character['first_name'] . " " . $first_character['second_name'] . " and deals " . $second_character_dmg . " damage" . '<br>';
+            echo $secondCharacterObj->firstName . " " . $secondCharacterObj->secondName . " hits " . $firstCharacterObj->firstName . " " . $firstCharacterObj->secondName . " and deals " . $second_character_dmg . " damage" . '<br>';
             $first_character_current_health -= $second_character_dmg;
-            echo ">>>" . $first_character['first_name'] . " " . $first_character['second_name'] . " has " . $first_character_current_health . " health left" . '<br>';
+            echo ">>>" . $firstCharacterObj->firstName . " " . $firstCharacterObj->secondName . " has " . $first_character_current_health . " health left" . '<br>';
         } else {
             break;
         }
@@ -83,16 +58,17 @@ function fight_calculate($first_character, $second_character)
     echo "************** WE HAVE A WINNER **************" . '<br>';
 
     if ($second_character_current_health <= 0) {
-        echo $first_character['first_name'] . " " . $first_character['second_name'] . " WINS!" . " | " . $second_character['first_name'] . " " . $second_character['second_name'] . " bites the dust." . '<br>';
-        return '.';
+        echo $firstCharacterObj->firstName . " " . $firstCharacterObj->secondName . " WINS!" . " | " . $secondCharacterObj->firstName . " " . $secondCharacterObj->secondName . " bites the dust." . '<br>';
+
     } else if ($first_character_current_health <= 0) {
-        echo $second_character['first_name'] . " " . $second_character['second_name'] . " WINS!" . " | " . $first_character['first_name'] . " " . $first_character['second_name'] . " bites the dust." . '<br>';
-        return '.';
+        echo $secondCharacterObj->firstName . " " . $secondCharacterObj->secondName . " WINS!" . " | " . $firstCharacterObj->firstName . " " . $firstCharacterObj->secondName . " bites the dust." . '<br>';
+
     }
-    return '.';
+
 }
-echo preview($first_character, $second_character);
-echo fight_calculate($first_character, $second_character);
+
+preview($firstCharacterObj, $secondCharacterObj);
+fight_calculate($firstCharacterObj, $secondCharacterObj);
 
 
 

@@ -29,8 +29,8 @@ if ($sort_by == 1) {
 }
 $sorts = [
     'id' => ['id ' . $asc, $up],
-    'first_name' => ['first_name ' . $asc, $up],
-    'second_name' => ['second_name ' . $asc, $up],
+    'firstName' => ['firstName ' . $asc, $up],
+    'secondName' => ['secondName ' . $asc, $up],
     'gender' => ['gender ' . $asc, $up],
     'age' => ['age ' . $asc, $up]
 ];
@@ -85,12 +85,12 @@ $characters_count = mysqli_num_rows($r_characters);
                     <th width="50"><a href="list.php?sort=id<?php echo getParStr($url_params);
                         if ($sort == 'id' && !$sort_by) echo '&sort_by=1'; ?>">Id<?php if ($sort == 'id') echo ' <span title="Отсортировано в ' . $sortstr . ' порядке">' . $order . '</span>'; ?></a>
                     </th>
-                    <th width="200"><a href="list.php?sort=first_name<?php echo getParStr($url_params);
-                        if ($sort == 'first_name' && !$sort_by) echo '&sort_by=1'; ?>">Name<?php if ($sort == 'first_name') echo ' <span title="Отсортировано в ' . $sortstr . ' порядке">' . $order . '</span>'; ?></a>
+                    <th width="200"><a href="list.php?sort=firstName<?php echo getParStr($url_params);
+                        if ($sort == 'firstName' && !$sort_by) echo '&sort_by=1'; ?>">Name<?php if ($sort == 'firstName') echo ' <span title="Отсортировано в ' . $sortstr . ' порядке">' . $order . '</span>'; ?></a>
                     </th>
-                    <th width="200"><a href="list.php?sort=second_name<?php echo getParStr($url_params);
-                        if ($sort == 'second_name' && !$sort_by) echo '&sort_by=1'; ?>">Last
-                            name<?php if ($sort == 'second_name') echo ' <span title="Отсортировано в ' . $sortstr . ' порядке">' . $order . '</span>'; ?></a>
+                    <th width="200"><a href="list.php?sort=secondName<?php echo getParStr($url_params);
+                        if ($sort == 'secondName' && !$sort_by) echo '&sort_by=1'; ?>">Last
+                            name<?php if ($sort == 'secondName') echo ' <span title="Отсортировано в ' . $sortstr . ' порядке">' . $order . '</span>'; ?></a>
                     </th>
                     <th width="150"><a href="list.php?sort=gender<?php echo getParStr($url_params);
                         if ($sort == 'gender' && !$sort_by) echo '&sort_by=1'; ?>">Gender<?php if ($sort == 'gender') echo ' <span title="Отсортировано в ' . $sortstr . ' порядке">' . $order . '</span>'; ?></a>
@@ -113,17 +113,17 @@ $characters_count = mysqli_num_rows($r_characters);
 
                     echo '<tr>
                             <td>' . $row['id'] . '</td>
-                            <td>' . $row['first_name'] . '</td>
-                            <td>' . $row['second_name'] . '</td>
+                            <td>' . $row['firstName'] . '</td>
+                            <td>' . $row['secondName'] . '</td>
                             <td>' . $row['gender'] . '</td>
                             <td>' . $row['age'] . '</td>
-                            <td>' . $row['s'] . '</td>
-                            <td>' . $row['p'] . '</td>
+                            <td>' . $row['strong'] . '</td>
+                            <td>' . $row['power'] . '</td>
                             <td>' . $row['e'] . '</td>
                             <td>' . $row['c'] . '</td>
                             <td>' . $row['i'] . '</td>
                             <td>' . $row['a'] . '</td>
-                            <td>' . $row['l'] . '</td>
+                            <td>' . $row['lucky'] . '</td>
                             <td>
                                 <a href="#" onclick="if(window.confirm(\'Delete?\')) { window.location = \'/delete.php?id=' . htmlspecialchars($row['id']) . '\'; } return false;">delete</a>
                             </td>

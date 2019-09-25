@@ -25,7 +25,7 @@ abstract class RecordGetter
 
     public function getRandomPerson()
     {
-        $allIdQuery = "SELECT id FROM characters";
+        $allIdQuery = 'SELECT id FROM characters';
         $readAllId = mysqli_query($this->link, $allIdQuery);
         $charactersId = mysqli_fetch_all($readAllId);
         $pqsCharactersId = count($charactersId);

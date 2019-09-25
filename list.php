@@ -57,7 +57,7 @@ $characters_count = mysqli_num_rows($r_characters);
 </head>
 <body bgcolor="#f5f5f5">
 
-<nav><a href="/fallout/index.php">Main</a> | Characters</nav>
+<nav><a href="/fallout/index.html">Main</a> | Characters</nav>
 <article>
     <div style="width:670px;" class="my-padding">
         <?php

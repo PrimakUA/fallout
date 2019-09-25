@@ -9,7 +9,7 @@ session_start();
     <link rel="stylesheet" href="/fallout/style.css">
 </head>
 <body bgcolor="#f5f5f5">
-<nav><a href="/fallout/index.php">Main</a> | <a href="/fallout/list.php">Character list</a> | Сreate</nav>
+<nav><a href="/fallout/index.html">Main</a> | <a href="/fallout/list.php">Character list</a> | Сreate</nav>
 <article>
     <h1>Select creation method</h1>
     <form action="list.php" method="post">
